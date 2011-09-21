@@ -226,13 +226,13 @@ tf.tokenPlain.triggerComplete = function (offset, event) {
       test = this.contents;
 
   // Split trailing space.
-  if (/ $/(test)) {
-    test = test.substring(0, test.length - 1);
+  if (test.match(/\s+$/)) {
+    test = test.replace(/\s+$/, "");
     out.push(new tf.tokenEmpty());
   }
 
   // Special characters must be quoted.
-  var type = /[ "'\\]/(test) ? tf.tokenQuoted : tf.tokenPlain;
+  var type = test.match(/[ "'\\]/) ? tf.tokenQuoted : tf.tokenPlain;
   out.unshift(new type(test, this.style));
 
   return out;
