@@ -12,12 +12,13 @@ $(document).ready(function () {
       var view = new termkit.commandView(shell);
       $('#terminal').append(view.$element);
       view.newCommand();
+      // Clicks elsewhere in the terminal view focus the active command.
+      $("#terminal").click(function () {
+        view.activeCommand().tokenField.focus();
+      });
     });    
   };
-  
-  $(document).mousedown(function () {
-    alert('wtf');
-  });
+    
 });
 
 })(jQuery);
