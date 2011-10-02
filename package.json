@@ -1,12 +1,12 @@
 {
-  "author": "",
+  "author": "Steven Wittens (acko.net)",
   "name": "termkit",
   "description": "a nextgen shellish webapp",
   "version": "0.0.0",
-  "homepage": "http://github.com/floby/TermKit",
+  "homepage": "http://github.com/yozlet/TermKit",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Floby/TermKit.git"
+    "url": "git://github.com/yozlet/TermKit.git"
   },
   "main": "Node/nodekit.js",
   "engines": {
@@ -14,8 +14,9 @@
   },
   "bin": "Node/nodekit.js",
   "dependencies": {
-    "connect": "1.2",
+    "connect": "1",
     "socket.io":">0.7",
+    "socket.io-client": ">0.7",
     "mime":"*"
   },
   "devDependencies": {}
