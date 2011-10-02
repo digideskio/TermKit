@@ -2,6 +2,7 @@
 var termkit = {
   version: 1,
 };
+
 require.paths.unshift(__dirname);
 require.paths.unshift(__dirname+'/../Shared');
 
