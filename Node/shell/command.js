@@ -290,6 +290,11 @@ exports.commandUnit.unixCommand.prototype.go = function () {
   headers.set('Content-Type', [ 'application/octet-stream', { schema: 'termkit.unix' } ]);
   this.process.stdout.emit('data', headers.generate());
 
+  // Adding dummy process std err output support
+  var that = this;
+  this.process.stderr.on("data", function(chunk){
+    that.process.stdout.emit("data", chunk);
+  });
 };
 
 
