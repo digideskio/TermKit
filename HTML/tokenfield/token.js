@@ -1,6 +1,6 @@
 (function ($) {
   
-var tf = termkit.tokenField;
+var tf = termkit.inputField;
 
 /**
  * Represents a single token in the field.
@@ -106,6 +106,7 @@ tf.token.prototype = {
           return;
         }
       }
+
       // Check contents contraints
       if (this.contents && (match = this.contents.exec(token.contents))) {
         update = this.callback.call(token, match.index + match[0].length, event);
@@ -275,7 +276,7 @@ tf.tokenQuoted.prototype = $.extend(new tf.token(), {
   checkSelf: function (selection, event) {
     // When backspacing from empty quoted token into another, remove ourselves.
     // Required due to allowEmpty == true.
-    if (event.keyCode == 8 && this.contents == '' && selection.anchor.token != this) {
+    if (event && event.keyCode == 8 && this.contents == '' && selection.anchor.token != this) {
       return [];
     }
   },
@@ -479,16 +480,17 @@ tf.token.triggers = {
 //    { contents: /^[\/]/, callback: tf.tokenRegex.triggerEscape },
 //    { contents: /[\/]/,  callback: tf.tokenRegex.triggerRegex },
     { contents: /./,     callback: tf.tokenPlain.triggerCharacter },
-    { contents: / /,     callback: tf.tokenPlain.triggerEmpty },
+    { contents: / /,     callback: tf.tokenPlain.splitSpace },
     { contents: /\|/,    callback: tf.tokenPipe.triggerPipe },
   ],
   'plain': [
-    { contents: / /,     callback: tf.tokenPlain.triggerComplete, keys: [ 9, 13 ] },
+    { contents: / /,     callback: tf.tokenPlain.splitSpace },
     { contents: /^ ?$/,  callback: tf.tokenEmpty.triggerEmpty },
-    { changes: / /,      callback: tf.tokenPlain.splitSpace },
+    { contents: /\|/,     callback: tf.tokenPipe.triggerPipe },
+    { changes: / /,      callback: tf.tokenPlain.splitSpace, keys: [ 9, 13 ] },
     { changes: /["']/,   callback: tf.tokenQuoted.triggerQuote },
-//    { changes: /[\/]/,   callback: tf.tokenRegex.triggerRegex },
     { changes: /\|/,     callback: tf.tokenPipe.triggerPipe },
+//    { changes: /[\/]/,   callback: tf.tokenRegex.triggerRegex },
   ],
   'quoted': [
     { contents: / $/,    callback: tf.tokenQuoted.triggerComplete, keys: [ 9, 13 ] },

@@ -6,6 +6,8 @@ var cv = termkit.commandView;
  * Represents a single command in the view.
  */
 cv.command = function (commandView, context) {
+  var that = this;
+
   this.$element = this.$markup();
   this.$sigil = this.$element.find('.sigil');
 
@@ -27,9 +29,20 @@ cv.command.prototype = {
     var $command = $('<div class="termkitCommand"><span class="sigil"></span>').data('controller', this);
 
     // Create tokenfield for command input.
-    this.tokenField = new termkit.tokenField();
-    this.tokenField.onChange = function (e, t) { that.checkTriggers(e, t); }
-    this.tokenField.onSubmit = function (e, t) { that.submitCommand(e, t); }
+    this.inputField = new termkit.inputField();
+    this.inputField.onChange = function (e, t) { that.checkTriggers(e, t); }
+    this.inputField.onSubmit = function (e, t) { that.submitCommand(e, t); }
+
+    // if there is nothing inputted on backspace, set the previous command contents 
+    this.inputField.signals.keydown.add(function(e, inputField) { 
+      if(e.keyCode == 8 && inputField.val == "" && that.context.prevCommand) {
+        e.charCode = 10;
+        e.keyCode = 13;
+        inputField.caret.setContents(that.context.prevCommand.inputField.val, e);
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
     
     // Create throbber.
     this.spinner = new termkit.spinner();
@@ -37,7 +50,7 @@ cv.command.prototype = {
     // Create outputFrame hosting outputViews for command output.
     this.outputFrame = new termkit.outputView.outputFrame();
 
-    $command.append(this.tokenField.$element);
+    $command.append(this.inputField.$element);
     $command.append(this.spinner.$element);
     $command.append(this.outputFrame.$element);
 
@@ -177,7 +190,7 @@ cv.command.prototype = {
   },
 
   toString: function () {
-    return '['+ this.tokenField.tokenList.tokens +']';
+    return '['+ this.inputField.tokenList.tokens +']';
   },
 };
 
@@ -233,7 +246,7 @@ cv.commandAutocomplete.handler = function (offset, event, tokens, callback) {
   });
 };
 
-cv.commandAutocomplete.prototype = $.extend(new cv.command(), {});
+cv.commandAutocomplete.prototype = $.extend(cv.command.prototype, {}); // was new cv.command
 
 ///////////////////////////////////////////////////////////////////////////////
 

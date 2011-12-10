@@ -1,6 +1,6 @@
 (function ($) {
 
-var tf = termkit.tokenField;
+var tf = termkit.inputField;
 
 /**
  * Autocomplete selection popup for use with a token.

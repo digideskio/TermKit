@@ -32,8 +32,9 @@ var fs = require('fs'),
 // - command-spec man: [ cat ], params: { --foo: ... }
 
 
-exports.autocomplete = function () {
+exports.autocomplete = function (tokensHistory) {
   this.keys = {};
+  this.tokensHistory = tokensHistory;
 };
 
 exports.autocomplete.prototype = {
@@ -65,8 +66,11 @@ exports.autocomplete.prototype = {
     });
         
     if (offset == 0) {
+      // Match previously executed commands
+      var matches = this.history(prefix, ignoreCase);
+
       // Match built-in commands.
-      var matches = this.builtin(prefix, ignoreCase);
+      matches.concat(this.builtin(prefix, ignoreCase));
 
       // Scan current dir for executables.
       this.filesystem(cwd, prefix, { ignoreCase: ignoreCase, executable: true }, track(function (files) {
@@ -83,7 +87,7 @@ exports.autocomplete.prototype = {
     else {
       // Scan current dir for files.
       this.filesystem(cwd, prefix, { ignoreCase: ignoreCase }, track(function (files) {
-        matches = files;
+        matches = matches.concat(files);
       }));      
     }
     
@@ -98,6 +102,27 @@ exports.autocomplete.prototype = {
       prefix = prefix.toLowerCase();
     }
     for (i in builtin.commands) {
+      var key = i;
+      if (ignoreCase) {
+        key = key.toLowerCase();
+      }
+      if (prefix == '' || key.indexOf(prefix) === 0) {
+        matches.push(exports.autocomplete.match(i, i + ' ', 'command'));
+      }
+    }
+    matches.sort();
+    return matches;
+  },
+
+  /**
+   * Complete history of entered commands.
+   */
+  history: function (prefix, ignoreCase) {
+    var matches = [];
+    if (ignoreCase) {
+      prefix = prefix.toLowerCase();
+    }
+    for (i in this.tokensHistory) {
       var key = i;
       if (ignoreCase) {
         key = key.toLowerCase();

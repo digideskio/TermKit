@@ -1,6 +1,6 @@
 (function ($) {
 
-var tf = termkit.tokenField;
+var tf = termkit.inputField;
 
 /**
  * Represents a selection inside the token-field.

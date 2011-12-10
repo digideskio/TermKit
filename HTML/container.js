@@ -10,6 +10,10 @@ var cc = termkit.container = function () {
 
 cc.prototype = {
 
+  set contents(value) {
+    this.collection = value;
+  },
+
   get contents() {
     return [].concat(this.collection);
   },
@@ -76,6 +80,10 @@ cc.prototype = {
     return this.collection[this.indexOf(object) - 1];
   },
 
+  clear: function(){
+    this.collection = [];
+  },
+  
 };
 
 })(jQuery);

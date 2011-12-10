@@ -111,7 +111,6 @@ tc.shell.prototype = {
       rel: rel,
     }, callback);
 
-    
     /*
       Disabled entirely. 
       
