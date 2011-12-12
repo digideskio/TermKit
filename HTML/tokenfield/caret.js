@@ -1,6 +1,6 @@
 (function ($) {
 
-var tf = termkit.tokenField;
+var tf = termkit.inputField;
 
 /**
  * Emulates a caret inside a token using an invisible ad-hoc textfield.
@@ -136,6 +136,7 @@ tf.caret.prototype = {
   },
 
   updateContents: function (event) {
+
     // Contents might have changed, reset selection.
     if (!this.selection) return;
     this.selection.anchor.offset = this.$input[0].selectionStart + this.prefix.length;
@@ -148,10 +149,11 @@ tf.caret.prototype = {
     if (this.token.contents != updated) {
       this.autocomplete.remove();
       this.token.contents = updated;
-      
+
       // Notify callers of event
       // (asynchronous to give the DOM time to finish event handling).
       async.call(this, function () {
+        
         // Merge stored key/char codes in, effectively merging keydown/keypress info.
         event.keyCode = event.keyCode || this.keyCode;
         event.charCode = event.charCode || this.charCode;
@@ -189,7 +191,9 @@ tf.caret.prototype = {
           // Move caret to previous token.
           var prev = this.tokenList.prev(this.token),
               selection = this.selection;
-          if (!prev) break;        
+          if (!prev) {
+            return;
+          }
           selection.anchor = { token: prev, offset: prev.contents.length };
           this.moveTo(selection, event);
 

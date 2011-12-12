@@ -3,7 +3,7 @@
 /**
  * Controller for token-based field.
  */
-var tf = termkit.tokenField = function () {
+var tf = termkit.inputField = function () {
   var that = this;
 
   this.$element = this.$markup();  
@@ -19,9 +19,16 @@ var tf = termkit.tokenField = function () {
   // Provide external events.
   this.onChange = function () {};
   this.onSubmit = function () {};
+
+  this.signals = {
+    keydown: new signals.Signal()
+  }
   
   // Set field event handlers.
   this.$element.mousedown(function (event) { that.fieldMouseDown(event); });
+  this.$element.keydown(function(event){
+    that.signals.keydown.dispatch(event, that);
+  });
   
   // Refresh markup.
   this.updateElement();
@@ -40,6 +47,19 @@ tf.prototype = {
   get contents() {
     return this.tokenList.contents;
   },
+
+  get val() {
+    var v = "";
+    for(var i in this.tokenList.contents) {
+      if(v != "")
+        v += " ";
+      if(this.tokenList.contents[i]._type != "pipe")
+        v += this.tokenList.contents[i]._contents;
+      else
+        v += "|";
+    }
+    return v;
+  },
   
   focus: function () {
     // Clean-up edit state, apply lingering edits.
@@ -48,6 +68,7 @@ tf.prototype = {
     // Create new empty token.
     var token = new tf.tokenEmpty();
     this.tokenList.add(token);
+
     this.updateElement();
 
     // Move caret into it.
@@ -113,7 +134,7 @@ tf.prototype = {
       // Apply triggers.
       update = token.checkTriggers(this.selection, event);
     }
-    
+
     // Insert replacement tokens if given.
     if (update) {
 
@@ -166,6 +187,8 @@ tf.prototype = {
     }
     
     this.onChange.call(token, event, this.contents);
+
+    return update;
   },
 
   // Submit from the given token.

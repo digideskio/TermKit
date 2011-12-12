@@ -14,7 +14,7 @@ $(document).ready(function () {
       view.newCommand();
       // Clicks elsewhere in the terminal view focus the active command.
       $("#terminal").click(function () {
-        view.activeCommand().tokenField.focus();
+        view.activeCommand().inputField.focus();
       });
     });    
   };

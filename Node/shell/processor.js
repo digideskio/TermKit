@@ -17,6 +17,7 @@ var workerProcessor = exports.processor = function (inStream, outStream) {
   this.buffer = '';
   this.views = {};
   this.config = {};
+  this.history = {};
 };
 
 exports.processor.prototype = {
@@ -130,6 +131,10 @@ exports.processor.prototype = {
 };
 
 workerProcessor.handlers = {
+
+  "shell.history": function(args, exit) {
+    this.history = args;
+  },
   
   /**
    * Set/update worker configuration.
@@ -157,7 +162,7 @@ workerProcessor.handlers = {
     
     if (offset >= tokens.length) return exit(false);
 
-    var auto = new autocomplete(),
+    var auto = new autocomplete(this.history),
         path = process.env.PATH.split(':');
 
     auto.process(cwd, path, tokens, offset, function (matches) {
@@ -173,13 +178,25 @@ workerProcessor.handlers = {
     var that = this,
         tokens = args.tokens,
         rel = args.rel;
-
+    
+    // very dummy history support
+    var tokensOriginal = "";
+    for(var key in tokens) {
+      if(tokensOriginal != "")
+        tokensOriginal += " | ";
+      tokensOriginal += tokens[key].toString().split(",").join(" ");
+    }
+    
     // Wrap exit callback to pass back updated environment.
     var shellExit = function (success, object, meta) {
       that.status(success, object);
 
       meta = meta || {};
       meta.environment = that.environment();
+      
+      // completed dummy history support
+      that.history[tokensOriginal] = true;
+
       exit(success, object, meta);
     };
 

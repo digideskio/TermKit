@@ -111,24 +111,28 @@ tc.shell.prototype = {
       rel: rel,
     }, callback);
 
-    // Anonymized usage/command logging. HTTPS is used for privacy.
-    var url;
-    if (window.preferences && parseInt(window.preferences.get('usageLogging'))) {
-      this.tag = this.tag || Math.floor(Math.random() * 100000);
-      // Note the URL fragment is only sent to Google Analytics SSL through JS, not to usage.termkit.org.
-      url = 'https://usage.termkit.org/?' + this.tag + '#'
-          + encodeURIComponent(
-            [
-              'v' + window.preferences.get('version'),
-              this.anonymize(tokens),
-              Math.floor(Math.random() * 100000)
-            ].join('--@--'));
-    }
-    else {
-      url = 'about:blank';
-    }
-    
-    $('#usage').attr('src', url);
+    /*
+      Disabled entirely. 
+      
+      // Anonymized usage/command logging. HTTPS is used for privacy.
+      var url;
+      if (window.preferences && parseInt(window.preferences.get('usageLogging'))) {
+        this.tag = this.tag || Math.floor(Math.random() * 100000);
+        // Note the URL fragment is only sent to Google Analytics SSL through JS, not to usage.termkit.org.
+        url = 'https://usage.termkit.org/?' + this.tag + '#'
+            + encodeURIComponent(
+              [
+                'v' + window.preferences.get('version'),
+                this.anonymize(tokens),
+                Math.floor(Math.random() * 100000)
+              ].join('--@--'));
+      }
+      else {
+        url = 'about:blank';
+      }
+      
+      $('#usage').attr('src', url);
+    */
   },
   
   /**

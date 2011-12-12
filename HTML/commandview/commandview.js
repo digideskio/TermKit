@@ -75,11 +75,11 @@ cv.prototype = {
   },
   
   newCommand: function () {
-    var command = new cv.command(this, new cv.commandContext(this.shell));
+    var command = new cv.command(this, new cv.commandContext(this.shell, this.activeCommand()));
     this.commandList.add(command);
     this.activeIndex = this.commandList.length - 1;
     this.updateElement();
-    command.tokenField.focus();
+    command.inputField.focus();
   },
   
   // Respond to mouse clicks.
